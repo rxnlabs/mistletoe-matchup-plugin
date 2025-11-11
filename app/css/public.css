@@ -1,0 +1,5 @@
+/* Public styles for Mistletoe Matchup Fantasy Draft */
+.snowdraft-league {
+  border: 2px dashed #c00;
+  padding: 1rem;
+}

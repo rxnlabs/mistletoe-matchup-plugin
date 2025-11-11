@@ -18,48 +18,59 @@
 
 namespace RXNLabs\MistletoeMatchupFantasyDraft;
 
-// Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) || ! file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
-	exit;
-}
+use League\Container\Container;
 
-require_once __DIR__ . '/vendor/autoload.php';
+if (!defined('ABSPATH')) exit;
 
-// add functionality for custom plugin
-function cshp_live_reload_plugin_support( $plugin_paths ) {
-	return array_merge( $plugin_paths, [
-		'insert-plugin-folder-name' => [
-			'watch_css_path' => [ 'build', 'build/css'],
-			'watch_js_path' => 'build/js'
-       ]
-    ] );
-}
-add_filter( 'cshp_lr_plugin_paths', 'cshp_live_reload_plugin_support' );
+require __DIR__ . '/vendor/autoload.php';
 
-/**
- * Plugin bootstrap.
- */
-final class Plugin {
-	/**
-	 * Initialize the plugin.
-	 */
-	public static function init() {
-		// Autoload classes.
-		if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
-			require_once __DIR__ . '/vendor/autoload.php';
-		}
+define('MISTLETOE_MATCHUP_FANTASY_DRAFT_VERSION', '1.0.0');
 
-		// Initialize core logic.
-		add_action( 'plugins_loaded', array( __CLASS__, 'load' ) );
-	}
+$container = new Container();
 
-	/**
-	 * Load plugin components.
-	 */
-	public static function load() {
-		// Initialize core logic or service providers here.
-	}
-}
+$container->add(Config::class, new Config(__FILE__));
+$container->add(Assets\Enqueue::class)->addArguments([Config::class]);
 
-// Initialize plugin.
-Plugin::init();
+$container->add(Register\Cpts::class)->addArguments([Config::class]);
+$container->add(Register\Roles::class);
+
+$container->add(Service\PusherService::class)->addArguments([Config::class]);
+$container->add(Service\DraftService::class)
+  ->addArguments([Service\PusherService::class, Repository\DraftRepo::class, Repository\LeagueRepo::class, Repository\TeamRepo::class, Repository\TropeRepo::class]);
+
+$container->add(Service\TradeService::class)
+  ->addArguments([Repository\TradeRepo::class, Repository\TropeRepo::class, Util\Helpers::class]);
+
+$container->add(Repository\LeagueRepo::class);
+$container->add(Repository\TeamRepo::class);
+$container->add(Repository\TropeRepo::class);
+$container->add(Repository\TradeRepo::class);
+$container->add(Repository\MovieRepo::class);
+$container->add(Repository\MatchupRepo::class);
+$container->add(Repository\DraftRepo::class);
+
+$container->add(Http\Nonces::class);
+
+$container->add(Http\Rest\DraftController::class)
+  ->addArguments([Service\DraftService::class, Service\PusherService::class, Http\Nonces::class]);
+
+$container->add(Http\Rest\TradeController::class)
+  ->addArguments([Service\TradeService::class, Http\Nonces::class]);
+
+$container->add(Http\Rest\MoviesController::class)
+  ->addArguments([Repository\MovieRepo::class, Http\Nonces::class]);
+
+$container->add(Http\Rest\MatchupsController::class)
+  ->addArguments([Repository\MatchupRepo::class, Repository\MovieRepo::class, Http\Nonces::class]);
+
+$plugin = new Plugin(
+  $container->get(Register\Roles::class),
+  $container->get(Register\Cpts::class),
+  $container->get(Assets\Enqueue::class),
+  $container->get(Http\Rest\DraftController::class),
+  $container->get(Http\Rest\TradeController::class),
+  $container->get(Http\Rest\MoviesController::class),
+  $container->get(Http\Rest\MatchupsController::class)
+);
+$plugin->init();
+
