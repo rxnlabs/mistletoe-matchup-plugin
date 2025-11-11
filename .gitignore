@@ -1,0 +1,134 @@
+# -----------------------------
+# OS & Editor clutter
+# -----------------------------
+.DS_Store
+**/.DS_Store
+Thumbs.db
+ehthumbs.db
+*.swp
+.*.swp
+*.un~
+.idea/
+.ideas/
+.vscode/
+*.sublime-*
+
+# -----------------------------
+# Environment & local config
+# -----------------------------
+.env
+.env.*
+!.env.example
+wp-cli.local.yml
+.ddev/
+.lando*
+*.local.*
+
+# -----------------------------
+# Logs & temp
+# -----------------------------
+*.log
+*.log-*
+*.pid
+*.seed
+*.tmproj
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# -----------------------------
+# Node & build caches
+# -----------------------------
+node_modules/
+.browserslistrc.cache
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.svelte-kit/
+.dist/
+dist/
+build/
+coverage/
+
+# -----------------------------
+# PHP / Composer / PHPUnit
+# -----------------------------
+vendor/
+.phpunit.cache/
+.php-cs-fixer.cache
+.phpstan/
+.phpstorm.meta.php
+composer-vendor/
+composer-vendor/bin
+
+# -----------------------------
+# WordPress project specifics
+# (adjust to your repo layout)
+# -----------------------------
+# Commonly exclude content uploads from VCS
+uploads/
+upgrade/
+upgrade-temp-backup/
+wp/
+wp-content/
+# Keep plugin/theme sources tracked even if above patterns match elsewhere
+!wp-content/plugins/
+!wp-content/themes/
+
+# -----------------------------
+# Archives & packages
+# -----------------------------
+*.7z
+*.dmg
+*.gz
+*.bz2
+*.iso
+*.jar
+*.rar
+*.tar
+*.tgz
+*.zip
+
+# -----------------------------
+# Data dumps & DB exports (tracked elsewhere if needed)
+# -----------------------------
+*.sql
+*.sqlite
+*.sqlite3
+*.dump
+*.bak
+*.backup
+
+# -----------------------------
+# Tooling & build configs (keep if you need them tracked)
+# Comment out lines you want to keep
+# -----------------------------
+.eslintcache
+.eslintignore
+.eslintrc*
+.prettierignore
+.prettierrc*
+.stylelintrc*
+.rollup.config.*
+.vite.config.*
+.webpack.*.js
+webpack.config.*
+postcss.config.*
+tsconfig.json
+jest.config.*
+phpunit.xml*
+phpcs.xml*
+.editorconfig
+
+# -----------------------------
+# Project-specific (examples)
+# -----------------------------
+# Ignore packaged plugin/theme zips created for distribution
+mistletoe*.zip
+# Ignore local build staging dir
+mistletoe-matchup-fantasy-draft
+# Hide Linear CLI TOML
+.linear.toml
+.junie

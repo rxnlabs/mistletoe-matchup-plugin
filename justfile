@@ -1,0 +1,5 @@
+zip-plugin:
+    rm -Rf vendor; rm -Rf mistletoe-matchup-fantasy-draft.zip; composer install --no-dev && mkdir crsc-data-bridge-sync && rsync -av --progress * crsc-data-bridge-sync --exclude crsc-data-bridge-sync --exclude .git --exclude .gitattributes --exclude .gitignore --exclude justfile --exclude node_modules --exclude composer.json --exclude composer.lock --exclude package.json --exclude package-lock.json --exclude app --exclude wp --exclude wp-content --exclude tests --exclude docs --exclude gitignore-composer-require-dev.sh --exclude eslint.config.mjs --exclude phpcs.xml.dist --exclude postcss.config.mjs --exclude rollup.config.mjs --exclude tsconfig.json --exclude vite.config.mjs --exclude README.md --exclude phpunit.xml --exclude tests --exclude .phpunit.cache --exclude wp --exclude wp-content --exclude CHANGELOG-ADMIN.md --exclude .linear.toml --exclude .junie && zip -rv crsc-data-bridge-sync.zip crsc-data-bridge-sync && rm -Rf crsc-data-bridge-sync && composer install
+
+clean-require-dev:
+    bash gitignore-composer-require-dev.sh

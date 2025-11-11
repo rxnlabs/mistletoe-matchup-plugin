@@ -1,0 +1,61 @@
+{
+  "name": "mistletoe-matchup-fantasy-draft-plugin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Basic assets builder and transpiler for JS and CSS files. Compiles TypeScript and uses Eslint.",
+  "engines": {
+    "node": ">=16.x <=27.x",
+    "npm": ">=8.x <=14.x"
+  },
+  "scripts": {
+    "watch": "npm run styles -- --ext css --watch & npm run styles -- --ext min.css --env production --watch & npm run dev -- --watch && kill $!",
+    "dev": "NODE_ENV=development vite build --config vite.config.mjs",
+    "build": "npm run scripts || npm run styles",
+    "styles": "postcss ../mistletoe-matchup-fantasy-draft/app/css/*.scss app/css/**/*.scss app/css/*.css app/css/**/*.css !app/css/_*.scss !app/css/**/_*.scss app/css/_*.css !app/css/**/_*.css --dir build/css --map --verbose",
+    "scripts": "vite build --config vite.config.mjs",
+    "lint": "npx eslint \"../mistletoe-matchup-fantasy-draft/app/**/*.{js,jsx,ts,tsx,mjs,mjsx}\"",
+    "lint:fix": "npx eslint \"../mistletoe-matchup-fantasy-draft/app/**/*.{js,jsx,ts,tsx,mjs,mjsx}\" --fix",
+    "ddev": "vite vite.ddev.config.mjs"
+  },
+  "author": "De'Yonté Wilkinson",
+  "license": "GPL-3.0",
+  "browserslist": {
+    "development": [
+      "last 1 Chrome version",
+      "last 1 Firefox version",
+      "last 1 Safari version"
+    ],
+    "production": [
+      "last 5 versions",
+      "> 0.1%",
+      "not dead"
+    ]
+  },
+  "devDependencies": {
+    "@csstools/postcss-sass": "^5.1.1",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
+    "@vitejs/plugin-react": "^4.7.0",
+    "autoprefixer": "^10.4.21",
+    "cssnano": "^7.1.0",
+    "eslint": "^9.32.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-react": "^7.37.5",
+    "fast-glob": "^3.3.3",
+    "globals": "^16.3.0",
+    "path": "^0.12.7",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "postcss-css-variables": "^0.19.0",
+    "postcss-import": "^16.1.1",
+    "postcss-nested": "^7.0.2",
+    "postcss-scss": "^4.0.9",
+    "sass": "^1.89.2",
+    "tslib": "^2.8.1",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.6",
+    "vite-plugin-filter-replace": "^0.1.14",
+    "vite-plugin-watch-and-run": "^1.7.5",
+    "vite-tsconfig-paths": "^5.1.4"
+  }
+}

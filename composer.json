@@ -1,0 +1,41 @@
+{
+  "name": "rxnlabs/mistletoe-matchup-fantasy-draft",
+  "description": "WordPress plugin to create a fantasy draft for the Mistletoe Matchup holiday game where participants can draft holiday movie moments",
+  "require": {
+    "php": ">=8.1",
+    "league/container": "^5.1",
+    "pusher/pusher-php-server": "^7.2"
+  },
+  "require-dev": {
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+    "dingo-d/wp-pest-integration-test-setup": "^1.6",
+    "ergebnis/composer-normalize": "^2.47",
+    "phpcompatibility/php-compatibility": "*",
+    "squizlabs/php_codesniffer": "*",
+    "wp-coding-standards/wpcs": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "RXNLabs\\MisletoeMatchupFantasyDraft\\": "src/"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "ergebnis/composer-normalize": true,
+      "pestphp/pest-plugin": true
+    }
+  },
+  "extra": {
+    "composer-normalize": {
+      "indent-size": 2,
+      "indent-style": "space"
+    }
+  },
+  "scripts": {
+    "phpcbf": "vendor/bin/phpcbf",
+    "phpcs": "vendor/bin/phpcs"
+  },
+  "optimize-autoloader": true
+}
