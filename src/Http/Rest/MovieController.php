@@ -3,11 +3,12 @@ namespace RXNLabs\MistletoeMatchupFantasyDraft\Http\Rest;
 
 use RXNLabs\MistletoeMatchupFantasyDraft\Http\Nonce;
 use RXNLabs\MistletoeMatchupFantasyDraft\PostTypes\Movie;
+use RXNLabs\MistletoeMatchupFantasyDraft\Util\Share;
 use WP_REST_Request;
 use WP_REST_Response;
 
 class MovieController {
-
+	use Share;
 	public function __construct(
 		private Nonce $nonces,
 		private Movie $movie

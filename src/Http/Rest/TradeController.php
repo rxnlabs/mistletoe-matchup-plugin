@@ -3,11 +3,12 @@ namespace RXNLabs\MistletoeMatchupFantasyDraft\Http\Rest;
 
 use RXNLabs\MistletoeMatchupFantasyDraft\Service\TradeService;
 use RXNLabs\MistletoeMatchupFantasyDraft\Http\Nonce;
+use RXNLabs\MistletoeMatchupFantasyDraft\Util\Share;
 use WP_REST_Request;
 use WP_REST_Response;
 
 class TradeController {
-
+	use Share;
 	public function __construct(
 		private TradeService $trade,
 		private Nonce $nonce

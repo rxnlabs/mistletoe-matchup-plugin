@@ -6,9 +6,9 @@ use RXNLabs\MistletoeMatchupFantasyDraft\Service\PusherService;
 use RXNLabs\MistletoeMatchupFantasyDraft\Http\Nonce;
 use WP_REST_Request;
 use WP_REST_Response;
-
+use RXNLabs\MistletoeMatchupFantasyDraft\Util\Share;
 class DraftController {
-
+	use Share;
 	public function __construct(
 		private DraftService $draft,
 		private PusherService $pusher,

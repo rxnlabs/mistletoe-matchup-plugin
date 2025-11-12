@@ -5,11 +5,12 @@ use RXNLabs\MistletoeMatchupFantasyDraft\Http\Nonce;
 use RXNLabs\MistletoeMatchupFantasyDraft\PostTypes\Matchup;
 use RXNLabs\MistletoeMatchupFantasyDraft\PostTypes\Movie;
 use RXNLabs\MistletoeMatchupFantasyDraft\Util\Helpers;
+use RXNLabs\MistletoeMatchupFantasyDraft\Util\Share;
 use WP_REST_Request;
 use WP_REST_Response;
 
 class MatchupController {
-
+	use Share;
 	public function __construct(
 		private Matchup $matchup,
 		private Movie $movie,
