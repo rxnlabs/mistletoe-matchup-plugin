@@ -2,13 +2,15 @@
 namespace RXNLabs\MistletoeMatchupFantasyDraft\Http\Rest;
 
 use RXNLabs\MistletoeMatchupFantasyDraft\Http\Nonce;
+use RXNLabs\MistletoeMatchupFantasyDraft\PostTypes\Movie;
 use WP_REST_Request;
 use WP_REST_Response;
 
 class MovieController {
 
 	public function __construct(
-		private Nonce $nonces
+		private Nonce $nonces,
+		private Movie $movie
 	) {
 		$this->hooks();
 	}
@@ -51,7 +53,7 @@ class MovieController {
 	public function list( WP_REST_Request $req ): WP_REST_Response {
 		$s     = sanitize_text_field( (string) ( $req->get_param( 's' ) ?? '' ) );
 		$args  = array(
-			'post_type'      => 'snowdraft_movie',
+			'post_type'      => $this->movie->get_slug(),
 			'post_status'    => 'any',
 			's'              => $s,
 			'posts_per_page' => 50,
@@ -73,7 +75,7 @@ class MovieController {
 		$data    = $req->get_json_params() ?: array();
 		$id      = (int) ( $data['id'] ?? 0 );
 		$postarr = array(
-			'post_type'    => 'snowdraft_movie',
+			'post_type'    => $this->movie->get_slug(),
 			'post_status'  => 'publish',
 			'post_title'   => (string) ( $data['title'] ?? '' ),
 			'post_content' => (string) ( $data['description'] ?? '' ),

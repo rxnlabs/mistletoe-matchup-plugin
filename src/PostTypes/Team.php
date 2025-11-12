@@ -24,7 +24,6 @@ class Team {
 	}
 
 	public function register_meta(): void {
-		// Teams
 		register_post_meta(
 			$this->get_slug(),
 			'_snowdraft_league_id',
@@ -76,12 +75,12 @@ class Team {
 					'parent_item_colon'     => __( 'Parent Teams:', 'mistletoe-matchup-fantasy-draft' ),
 					'menu_name'             => __( 'Teams', 'mistletoe-matchup-fantasy-draft' ),
 				),
-				'public'                => false,
+				'public'                => true,
 				'hierarchical'          => false,
 				'show_ui'               => true,
 				'show_in_nav_menus'     => true,
 				'supports'              => array( 'title', 'editor', 'author', 'thumbnail', 'revisions' ),
-				'has_archive'           => true,
+				'has_archive'           => false,
 				'rewrite'               => true,
 				'query_var'             => true,
 				'menu_position'         => null,

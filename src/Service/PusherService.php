@@ -9,7 +9,7 @@ class PusherService {
 	private Pusher $pusher;
 
 	public function __construct( private Config $config ) {
-		$pc           = $config->pusherConfig();
+		$pc           = $config->pusher_config();
 		$this->pusher = new Pusher(
 			$pc['key'] ?? '',
 			$pc['secret'] ?? '',

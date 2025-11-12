@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace RXNLabs\MistletoeMatchupFantasyDraft\Helper;
+namespace RXNLabs\MistletoeMatchupFantasyDraft\Util;
 
 // exit if not loading in WordPress context but don't exit if running our PHPUnit tests
 if ( ! defined( 'ABSPATH' ) && ! defined( 'PHPUNIT_TESTS_RUNNING' ) ) {
@@ -136,30 +136,111 @@ trait Share {
 	}
 
 	public function is_groups_plugin_active(): bool {
-		return class_exists( '\Groups_Group' );
+		return class_exists( '\Groups_Group' ) && class_exists( '\Groups_User' ) && class_exists( '\Groups_Post_Access' );
 	}
 
-	public function can_manage_league( int $league_id, int $user_id = 0 ): bool {
+	public function is_league_commissioner( int $league_id, int $player_id = 0 ): bool {
 		if ( ! $this->is_groups_plugin_active() ) {
 			return false;
 		}
 
-		$find_user_id = $user_id ?: get_current_user_id();
+		$find_user_id = $player_id ?: get_current_user_id();
 		$find_group   = new \Groups_Group( $league_id );
 
-		return ! empty( $find_group->get_group_id() ) && $find_user_id === $find_group->get_creator_id();
+		return ! empty( $find_group->get_group_id() ) && $find_user_id === absint( $find_group->get_creator_id() );
 	}
 
-	public function is_user_in_league( int $league_id, int $user_id = 0 ): bool {
+	/**
+	 * Check if a player is a member of a specific league group.
+	 *
+	 * This function verifies whether a given player is part of the specified league group.
+	 * If no player ID is provided, it checks for the currently logged-in user.
+	 * This requires the Groups plugin to be active. If the plugin is inactive,
+	 * the function will always return false.
+	 *
+	 * @param int $league_id The ID of the league group to check membership for.
+	 * @param int $player_id Optional. The ID of the player to check. Defaults to 0 (current user).
+	 *
+	 * @return bool True if the player is a member of the league group, false otherwise.
+	 */
+	public function is_player_in_league( int $league_id, int $player_id = 0 ): bool {
 		if ( ! $this->is_groups_plugin_active() ) {
 			return false;
 		}
 
 		$find_group   = new \Groups_Group( $league_id );
-		$find_user_id = $user_id ?: get_current_user_id();
+		$find_user_id = $player_id ?: get_current_user_id();
 
 		if ( \Groups_User_Group::read( $find_user_id, $find_group->get_group_id() ) ) {
 			return true;
 		}
+	}
+
+	/**
+	 * Retrieve the leagues associated with a player, excluding certain default groups.
+	 *
+	 * This method fetches the player's leagues using the Groups plugin, ensuring that
+	 * default groups like the "Registered" group (ID 1) are excluded from the result.
+	 * Returns `false` if the Groups plugin is not active.
+	 *
+	 * @param int $player_id The ID of the player whose leagues are to be retrieved. Defaults to 0.
+	 *
+	 * @return bool|array Returns false if the Groups plugin is inactive. Otherwise, returns an array of leagues (groups) associated with the player.
+	 */
+	public function get_player_leagues( int $player_id = 0 ): bool|array {
+		if ( ! $this->is_groups_plugin_active() ) {
+			return false;
+		}
+
+		$groups_user  = new \Groups_User( $player_id );
+		$clean_groups = array();
+
+		if ( ! empty( $groups_user->get_group_ids_deep() ) ) {
+			$groups = $groups_user->get_groups();
+			if ( ! empty( $groups ) ) {
+				foreach ( $groups as $group ) {
+					// Exclude the default Registered group (ID 1) from the list of leagues since we cannot delete group 1.
+					if ( 1 !== absint( $group->get_group_id() ) ) {
+						$clean_groups[] = $group;
+					}
+				}
+			}
+		}
+
+		return $clean_groups;
+	}
+
+
+	/**
+	 * Search for a partial string match in array values.
+	 *
+	 * This method searches through an array and returns all elements that contain
+	 * the specified search string as a substring. The search is case-insensitive by default.
+	 *
+	 * @param array  $array The array to search through.
+	 * @param string $search_string The partial string to search for.
+	 * @param bool   $case_sensitive Whether the search should be case-sensitive. Default false.
+	 * @param bool   $return_keys Whether to return matching keys instead of values. Default false.
+	 *
+	 * @return array Array of matching values or keys.
+	 */
+	public function search_partial_string_in_array( array $array, string $search_string, bool $case_sensitive = false, bool $return_keys = false ): array {
+		$matches = array();
+
+		foreach ( $array as $key => $value ) {
+			// Convert value to string for comparison
+			$string_value = is_string( $value ) ? $value : (string) $value;
+
+			// Perform case-sensitive or case-insensitive search
+			$found = $case_sensitive
+				? strpos( $string_value, $search_string ) !== false
+				: stripos( $string_value, $search_string ) !== false;
+
+			if ( $found ) {
+				$matches[] = $return_keys ? $key : $value;
+			}
+		}
+
+		return $matches;
 	}
 }

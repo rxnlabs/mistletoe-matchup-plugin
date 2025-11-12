@@ -77,6 +77,15 @@ function init(): null|Container {
 			);
 
 			$di_container->get(
+				$di_container->add( 'service_league', Service\LeagueService::class )->addArguments(
+					array(
+						$di_container->get( 'post_type_league' ),
+						$di_container->get( 'post_type_team' ),
+					)
+				)->getAlias()
+			);
+
+			$di_container->get(
 				$di_container->add( 'service_draft', Service\DraftService::class )->addArguments(
 					array(
 						$di_container->get( 'service_pusher' ),
@@ -97,6 +106,7 @@ function init(): null|Container {
 				$di_container->add( 'controller_movie', Http\Rest\MovieController::class )->addArguments(
 					array(
 						$di_container->get( 'nonce' ),
+						$di_container->get( 'post_type_movie' ),
 					)
 				)->getAlias()
 			);
@@ -130,7 +140,10 @@ function init(): null|Container {
 			);
 
 		} catch ( \Throwable $e ) {
-			error_log( $e->getMessage() );
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG && defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+				error_log( $e->getMessage() );
+			}
 		}
 	}
 

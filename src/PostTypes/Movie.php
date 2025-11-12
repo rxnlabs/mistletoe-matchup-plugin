@@ -33,6 +33,7 @@ class Movie {
 				'type'         => 'integer',
 				'single'       => true,
 				'show_in_rest' => true,
+				'description'  => 'Year of release',
 			)
 		);
 		register_post_meta(
@@ -83,7 +84,7 @@ class Movie {
 				'show_ui'               => true,
 				'show_in_nav_menus'     => true,
 				'supports'              => array( 'title', 'editor', 'thumbnail', 'revisions', 'author', 'custom-fields' ),
-				'has_archive'           => true,
+				'has_archive'           => false,
 				'rewrite'               => true,
 				'query_var'             => true,
 				'menu_position'         => null,

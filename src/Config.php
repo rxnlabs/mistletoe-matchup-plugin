@@ -3,36 +3,36 @@ namespace RXNLabs\MistletoeMatchupFantasyDraft;
 
 class Config {
 
-	private string $pluginFile;
-	private string $pluginDir;
-	private string $pluginUrl;
+	private string $plugin_file;
+	private string $plugin_dir;
+	private string $plugin_url;
 	private string $version;
 
-	public function __construct( string $pluginFile ) {
-		$this->pluginFile = $pluginFile;
-		$this->pluginDir  = plugin_dir_path( $pluginFile );
-		$this->pluginUrl  = plugin_dir_url( $pluginFile );
-		$this->version    = defined( 'MISTLETOE_MATCHUP_FANTASY_DRAFT_VERSION' ) ? (string) MISTLETOE_MATCHUP_FANTASY_DRAFT_VERSION : '1.0.0';
+	public function __construct( string $plugin_file ) {
+		$this->plugin_file = $plugin_file;
+		$this->plugin_dir  = plugin_dir_path( $plugin_file );
+		$this->plugin_url  = plugin_dir_url( $plugin_file );
+		$this->version     = defined( 'MISTLETOE_MATCHUP_FANTASY_DRAFT_VERSION' ) ? (string) MISTLETOE_MATCHUP_FANTASY_DRAFT_VERSION : '1.0.0';
 	}
 
 	public function file(): string {
-		return $this->pluginFile; }
+		return $this->plugin_file; }
 	public function dir(): string {
-		return $this->pluginDir; }
+		return $this->plugin_dir; }
 	public function url(): string {
-		return $this->pluginUrl; }
+		return $this->plugin_url; }
 	public function version(): string {
 		return $this->version; }
 
-	public function buildJsUrl( string $name ): string {
+	public function build_js_url( string $name ): string {
 		return $this->url() . 'build/js/' . ltrim( $name, '/' );
 	}
 
-	public function buildCssUrl( string $name ): string {
+	public function build_css_url( string $name ): string {
 		return $this->url() . 'build/css/' . ltrim( $name, '/' );
 	}
 
-	public function pusherConfig(): array {
+	public function pusher_config(): array {
 		$options = get_option( 'snowdraft_settings', array() );
 		return array(
 			'key'     => (string) ( $options['pusher_key'] ?? getenv( 'PUSHER_APP_KEY' ) ?: '' ),

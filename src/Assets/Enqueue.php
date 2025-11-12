@@ -31,8 +31,8 @@ class Enqueue {
 		$handleCss = 'snowdraft-' . $context . '-css';
 
 		// In development you could point to Vite dev server; for now always enqueue built assets
-		$js  = $this->config->buildJsUrl( $context . '.js' );
-		$css = $this->config->buildCssUrl( $context . '.css' );
+		$js  = $this->config->build_js_url( $context . '.js' );
+		$css = $this->config->build_css_url( $context . '.css' );
 
 		wp_register_script( $handleJs, $js, array( 'wp-api-fetch' ), $this->config->version(), true );
 		wp_register_style( $handleCss, $css, array(), $this->config->version() );
@@ -47,8 +47,8 @@ class Enqueue {
 				'restBase' => esc_url_raw( rest_url( 'snowdraft/v1/' ) ),
 				'nonce'    => wp_create_nonce( 'wp_rest' ),
 				'pusher'   => array(
-					'key'     => $this->config->pusherConfig()['key'] ?? '',
-					'cluster' => $this->config->pusherConfig()['cluster'] ?? 'us2',
+					'key'     => $this->config->pusher_config()['key'] ?? '',
+					'cluster' => $this->config->pusher_config()['cluster'] ?? 'us2',
 				),
 			)
 		);
