@@ -31,6 +31,9 @@
       "not dead"
     ]
   },
+  "dependencies": {
+    "pusher-js": "^8.4.0"
+  },
   "devDependencies": {
     "@csstools/postcss-sass": "^5.1.1",
     "@typescript-eslint/eslint-plugin": "^8.38.0",

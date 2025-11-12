@@ -12,65 +12,129 @@
  * Requires PHP:      8.0
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * Requires Plugins: groups
  *
  * @package RXNLabs\MistletoeMatchupFantasyDraft
  */
-
+declare( strict_types=1 );
 namespace RXNLabs\MistletoeMatchupFantasyDraft;
 
-use League\Container\Container;
+if ( ! defined( 'ABSPATH' ) || ! file_exists( __DIR__ . '/vendor/autoload.php' ) || defined( 'PHP_UNIT_TESTS_RUNNING' ) ) {
+	exit;
+}
 
-if (!defined('ABSPATH')) exit;
+use League\Container\Container;
+use League\Container\ReflectionContainer;
 
 require __DIR__ . '/vendor/autoload.php';
 
-define('MISTLETOE_MATCHUP_FANTASY_DRAFT_VERSION', '1.0.0');
+define( 'MISTLETOE_MATCHUP_FANTASY_DRAFT_VERSION', '1.0.0' );
 
-$container = new Container();
+function init(): null|Container {
+	static $di_container = null;
 
-$container->add(Config::class, new Config(__FILE__));
-$container->add(Assets\Enqueue::class)->addArguments([Config::class]);
+	if ( null === $di_container ) {
+		$di_container = new Container();
+		$di_container->delegate( new ReflectionContainer( cacheResolutions: true ) );
 
-$container->add(Register\Cpts::class)->addArguments([Config::class]);
-$container->add(Register\Roles::class);
+		try {
 
-$container->add(Service\PusherService::class)->addArguments([Config::class]);
-$container->add(Service\DraftService::class)
-  ->addArguments([Service\PusherService::class, Repository\DraftRepo::class, Repository\LeagueRepo::class, Repository\TeamRepo::class, Repository\TropeRepo::class]);
+			$di_container->get( $di_container->add( 'config', Config::class )->addArgument( __FILE__ )->getAlias() );
+			$di_container->get( $di_container->add( 'utils_helper', Util\Helpers::class )->getAlias() );
 
-$container->add(Service\TradeService::class)
-  ->addArguments([Repository\TradeRepo::class, Repository\TropeRepo::class, Util\Helpers::class]);
+			$di_container->get(
+				$di_container->add( 'enqueue', Assets\Enqueue::class )->addArguments(
+					array(
+						$di_container->get( 'config' ),
+					)
+				)->getAlias()
+			);
 
-$container->add(Repository\LeagueRepo::class);
-$container->add(Repository\TeamRepo::class);
-$container->add(Repository\TropeRepo::class);
-$container->add(Repository\TradeRepo::class);
-$container->add(Repository\MovieRepo::class);
-$container->add(Repository\MatchupRepo::class);
-$container->add(Repository\DraftRepo::class);
+			$di_container->get( $di_container->add( 'role_league_commissioner', Roles\League_Commissioner::class )->getAlias() );
+			$di_container->get( $di_container->add( 'post_type_trope', PostTypes\Trope::class )->getAlias() );
+			$di_container->get( $di_container->add( 'post_type_movie', PostTypes\Movie::class )->getAlias() );
+			$di_container->get( $di_container->add( 'post_type_league', PostTypes\League::class )->getAlias() );
+			$di_container->get( $di_container->add( 'post_type_team', PostTypes\Team::class )->getAlias() );
+			$di_container->get( $di_container->add( 'post_type_matchup', PostTypes\Matchup::class )->getAlias() );
+			$di_container->get( $di_container->add( 'post_type_trade', PostTypes\Trade::class )->getAlias() );
 
-$container->add(Http\Nonces::class);
+			$di_container->get(
+				$di_container->add( 'taxonomy_trope_category', Taxonomy\TropeCategory::class )->addArguments(
+					array(
+						$di_container->get( 'post_type_trope' ),
+					)
+				)->getAlias()
+			);
 
-$container->add(Http\Rest\DraftController::class)
-  ->addArguments([Service\DraftService::class, Service\PusherService::class, Http\Nonces::class]);
+			$di_container->get( $di_container->add( 'nonce', Http\Nonce::class )->getAlias() );
 
-$container->add(Http\Rest\TradeController::class)
-  ->addArguments([Service\TradeService::class, Http\Nonces::class]);
+			$di_container->get(
+				$di_container->add( 'service_pusher', Service\PusherService::class )->addArguments(
+					array(
+						$di_container->get( 'config' ),
+					)
+				)->getAlias()
+			);
 
-$container->add(Http\Rest\MoviesController::class)
-  ->addArguments([Repository\MovieRepo::class, Http\Nonces::class]);
+			$di_container->get(
+				$di_container->add( 'service_draft', Service\DraftService::class )->addArguments(
+					array(
+						$di_container->get( 'service_pusher' ),
+					)
+				)->getAlias()
+			);
 
-$container->add(Http\Rest\MatchupsController::class)
-  ->addArguments([Repository\MatchupRepo::class, Repository\MovieRepo::class, Http\Nonces::class]);
+			$di_container->get(
+				$di_container->add( 'service_trade', Service\TradeService::class )->addArguments(
+					array(
+						$di_container->get( 'utils_helper' ),
+						$di_container->get( 'post_type_trade' ),
+					)
+				)->getAlias()
+			);
 
-$plugin = new Plugin(
-  $container->get(Register\Roles::class),
-  $container->get(Register\Cpts::class),
-  $container->get(Assets\Enqueue::class),
-  $container->get(Http\Rest\DraftController::class),
-  $container->get(Http\Rest\TradeController::class),
-  $container->get(Http\Rest\MoviesController::class),
-  $container->get(Http\Rest\MatchupsController::class)
-);
-$plugin->init();
+			$di_container->get(
+				$di_container->add( 'controller_movie', Http\Rest\MovieController::class )->addArguments(
+					array(
+						$di_container->get( 'nonce' ),
+					)
+				)->getAlias()
+			);
+			$di_container->get(
+				$di_container->add( 'controller_draft', Http\Rest\DraftController::class )->addArguments(
+					array(
+						$di_container->get( 'service_draft' ),
+						$di_container->get( 'service_pusher' ),
+						$di_container->get( 'nonce' ),
+					)
+				)->getAlias()
+			);
 
+			$di_container->get(
+				$di_container->add( 'controller_matchup', Http\Rest\MatchupController::class )->addArguments(
+					array(
+						$di_container->get( 'post_type_matchup' ),
+						$di_container->get( 'post_type_movie' ),
+						$di_container->get( 'nonce' ),
+					)
+				)->getAlias()
+			);
+
+			$di_container->get(
+				$di_container->add( 'controller_trade', Http\Rest\TradeController::class )->addArguments(
+					array(
+						$di_container->get( 'service_trade' ),
+						$di_container->get( 'nonce' ),
+					)
+				)->getAlias()
+			);
+
+		} catch ( \Throwable $e ) {
+			error_log( $e->getMessage() );
+		}
+	}
+
+	return $di_container;
+}
+
+init();
